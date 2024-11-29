@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,36 +10,37 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Map<String, dynamic>> servicos = [
-    {
-      "titulo": "corte de cabelo",
-      "descricao":
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis quam sit amet risus placerat, id consequat lorem tincidunt. Ut at viverra elit. Sed egestas lectus eget nisi scelerisque, id fermentum felis laoreet. Nulla vel felis nec magna vehicula cursus. Proin vestibulum laoreet libero, ut fringilla mi laoreet a.",
-      "preco": 50.00,
-      "imagemUrl": "https://via.placeholder.com/150"
-    },
-    {
-      "titulo": "Manicure e pedicure",
-      "descricao":
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus pharetra lectus nec ex iaculis, sit amet cursus nulla ullamcorper. Sed pharetra risus ac risus vestibulum, vitae dapibus felis gravida. Donec luctus dolor ac turpis vehicula, sit amet tincidunt turpis varius. Curabitur gravida eros non mauris iaculis, se",
-      "preco": 35.00,
-      "imagemUrl": "https://via.placeholder.com/150"
-    },
-    {
-      "titulo": "mecanico",
-      "descricao":
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis quam sit amet risus placerat, id consequat lorem tincidunt. Ut at viverra elit. Sed egestas lectus eget nisi scelerisque, id fermentum felis laoreet. Nulla vel felis nec magna vehicula cursus. Proin vestibulum laoreet libero, ut fringilla mi laoreet a.",
-      "preco": 150.00,
-      "imagemUrl": "https://via.placeholder.com/150"
-    },
-    {
-      "titulo": "eletricista",
-      "descricao":
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis quam sit amet risus placerat, id consequat lorem tincidunt. Ut at viverra elit. Sed egestas lectus eget nisi scelerisque, id fermentum felis laoreet. Nulla vel felis nec magna vehicula cursus. Proin vestibulum laoreet libero, ut fringilla mi laoreet a.",
-      "preco": 250.00,
-      "imagemUrl": "https://via.placeholder.com/150"
-    },
-  ];
+  List<dynamic> servicos = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    listaServicos();
+  }
+
+  Future<void> listaServicos() async {
+    try {
+      final response =
+          await http.get(Uri.parse("http://10.56.45.24/public/api/servicos"));
+      if (response.statusCode == 200) {
+        setState(() {
+          servicos = json.decode(response.body);
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      mostrarError("Erro: $e");
+    }
+  }
+
+  void mostrarError(String mesagem) {
+    setState(() {
+      isLoading = false;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(mesagem)));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,56 +97,60 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: servicos.length,
-        itemBuilder: (context, index) {
-          final servico = servicos[index];
-          return Card(
-            elevation: 0.5,
-            margin: const EdgeInsets.all(8.0),
-            color: const Color(0xfffcfcfc),
-            child: Row(
-              children: [
-                Image.network(
-                  servico["imagemUrl"],
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                ),
-                Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView.builder(
+              itemCount: servicos.length,
+              itemBuilder: (context, index) {
+                final servico = servicos[index];
+                return Card(
+                  elevation: 0.5,
+                  margin: const EdgeInsets.all(8.0),
+                  color: const Color(0xfffcfcfc),
+                  child: Row(
                     children: [
-                      Text(
-                        servico["titulo"],
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                      Image.network(
+                        servico['fotos'][0]['imagem'],
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                      ),
+                      Expanded(
+                          child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              servico["titulo"],
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                            Text(
+                              servico["descricao"],
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              'R\$ ${double.parse(servico["valor"]).toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                        textAlign: TextAlign.left,
-                      ),
-                      Text(
-                        servico["descricao"],
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        'R\$ ${servico["preco"].toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      ))
                     ],
                   ),
-                ))
-              ],
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }
