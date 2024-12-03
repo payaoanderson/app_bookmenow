@@ -11,9 +11,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  font_awesome_flutter: ^10.0.0 # Certifique-se de usar a versão mais recente
   cupertino_icons: ^1.0.8
   http: ^1.2.2
-  font_awesome_icon_class: ^0.0.6
 
 dev_dependencies:
   flutter_test:

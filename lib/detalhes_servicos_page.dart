@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-//import 'package:font_awesome_icon_class/font_awesome_icon_class.dart' as font_awesome_icon;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DetalhesServicosPage extends StatelessWidget {
-  const DetalhesServicosPage({super.key});
+  final Map<String, dynamic> servico;
+  const DetalhesServicosPage({super.key, required this.servico});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Nome Serviços"),
+        title: Text(servico['titulo']),
         backgroundColor: Colors.white,
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          Image.asset(
-            "assets/tecnico-em-mecanica.png",
+          Image.network(
+            (servico['fotos'][0]['imagem']),
             height: 250,
             width: double.infinity,
             fit: BoxFit.cover,
@@ -24,9 +25,9 @@ class DetalhesServicosPage extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          const Text(
-            "Titulo do Serviço",
-            style: TextStyle(
+          Text(
+            (servico['titulo']),
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
@@ -34,24 +35,26 @@ class DetalhesServicosPage extends StatelessWidget {
           const SizedBox(
             height: 20,
           ),
-          const Text("Descriçao do Serviço"),
+          Text(
+            (servico['descricao']),
+          ),
           const SizedBox(
             height: 20,
           ),
-          const Text(
-            "R\$ 20,00",
-            style: TextStyle(
+          Text(
+            'R\$ ${double.parse(servico["valor"]).toStringAsFixed(2)}',
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.orange,
             ),
           ),
           const Divider(),
-          const Text("Endereço: paraiba, 125"),
-          const Text("Bairro: Centro"),
-          const Text("CEP: 17512792"),
-          const Text("Telefone: 14-2587411"),
-          const Text("Celular: 14-996999-8888"),
+          Text("Endereço: ${servico["endereco"]}"),
+          Text("Bairro: ${servico["bairro"]}"),
+          Text("CEP: ${servico["cep"]}"),
+          Text("Telefone: ${servico["telefone"]}"),
+          Text("Celular: ${servico["celular"]}"),
           const SizedBox(
             height: 20,
           ),
@@ -67,9 +70,9 @@ class DetalhesServicosPage extends StatelessWidget {
               ),
               ElevatedButton.icon(
                 onPressed: () {
-                  // Ação do botão
+                  // Ação do botão para abrir WhatsApp
                 },
-//                icon: const Icon(Icons.what),
+                icon: const FaIcon(FontAwesomeIcons.whatsapp),
                 label: const Text('WhatsApp'),
               ),
             ],
