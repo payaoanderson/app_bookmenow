@@ -1,3 +1,4 @@
+import 'package:bookmenow/detalhes_servicos_page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -105,48 +106,58 @@ class _HomePageState extends State<HomePage> {
               itemCount: servicos.length,
               itemBuilder: (context, index) {
                 final servico = servicos[index];
-                return Card(
-                  elevation: 0.5,
-                  margin: const EdgeInsets.all(8.0),
-                  color: const Color(0xfffcfcfc),
-                  child: Row(
-                    children: [
-                      Image.network(
-                        servico['fotos'][0]['imagem'],
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DetalhesServicosPage(),
                       ),
-                      Expanded(
-                          child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              servico["titulo"],
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                            Text(
-                              servico["descricao"],
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              'R\$ ${double.parse(servico["valor"]).toStringAsFixed(2)}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                    );
+                  },
+                  child: Card(
+                    elevation: 0.5,
+                    margin: const EdgeInsets.all(8.0),
+                    color: const Color(0xfffcfcfc),
+                    child: Row(
+                      children: [
+                        Image.network(
+                          servico['fotos'][0]['imagem'],
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
                         ),
-                      ))
-                    ],
+                        Expanded(
+                            child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                servico["titulo"],
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.left,
+                              ),
+                              Text(
+                                servico["descricao"],
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                'R\$ ${double.parse(servico["valor"]).toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ))
+                      ],
+                    ),
                   ),
                 );
               },
